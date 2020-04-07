@@ -44,7 +44,7 @@ with open(args.test) as f:
     data = [line.split()[0] for line in f]
 
 data = [MolTree(s) for s in data]
-batches = [data[i : i + 1] for i in xrange(0, len(data))]
+batches = [data[i : i + 1] for i in range(0, len(data))]
 dataset = MolTreeDataset(batches, vocab, assm=False)
 loader = DataLoader(dataset, batch_size=1, shuffle=False, num_workers=0, collate_fn=lambda x:x[0])
 
@@ -54,7 +54,7 @@ for batch in loader:
     x_tree_vecs, _, x_mol_vecs = model.encode(batch[1], batch[2])
     assert x_tree_vecs.size(0) == x_mol_vecs.size(0)
 
-    for k in xrange(args.num_decode):
+    for k in range(args.num_decode):
         z_tree_vecs, z_mol_vecs = model.fuse_noise(x_tree_vecs, x_mol_vecs)
         smiles = mol_batch[0].smiles
         new_smiles = model.decode(z_tree_vecs[0].unsqueeze(0), z_mol_vecs[0].unsqueeze(0))

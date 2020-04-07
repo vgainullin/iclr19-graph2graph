@@ -11,7 +11,7 @@ import math, random, sys
 import numpy as np
 import argparse
 from collections import deque
-import cPickle as pickle
+import pickle
 
 from fast_jtnn import *
 import rdkit
@@ -66,7 +66,7 @@ PRINT_ITER = 20
 param_norm = lambda m: math.sqrt(sum([p.norm().item() ** 2 for p in m.parameters()]))
 grad_norm = lambda m: math.sqrt(sum([p.grad.norm().item() ** 2 for p in m.parameters() if p.grad is not None]))
 
-for epoch in xrange(args.load_epoch + 1, args.epoch):
+for epoch in range(args.load_epoch + 1, args.epoch):
     loader = PairTreeFolder(args.train, vocab, args.batch_size, num_workers=4)
     meters = np.zeros(4)
 

@@ -1,16 +1,18 @@
 import sys
 sys.path.append('../')
-
+import os
 import torch
 import torch.nn as nn
 from multiprocessing import Pool
 
 import math, random, sys
-import cPickle as pickle
+import pickle
 import argparse
 
 from fast_jtnn import *
 import rdkit
+
+PATH_OUTPUT = "processed/"
 
 def tensorize(smiles, assm=False):
     mol_tree = MolTree(smiles)
@@ -42,40 +44,39 @@ if __name__ == "__main__":
     parser.add_argument('--mode', type=str, default='pair')
     parser.add_argument('--ncpu', type=int, default=8)
     args = parser.parse_args()
-
+    
+    dirname = os.path.dirname(args.train)
+    save_dir = os.path.join(dirname, PATH_OUTPUT)
+    os.makedirs(save_dir, exist_ok=True)
+    
     pool = Pool(args.ncpu)
 
     if args.mode == 'pair':
         #dataset contains molecule pairs
         with open(args.train) as f:
             data = [line.strip("\r\n ").split()[:2] for line in f]
-
+        
+        num_splits = int(len(data) / 10000)
         all_data = pool.map(tensorize_pair, data)
-        num_splits = len(data) / 10000
-
-        le = (len(all_data) + num_splits - 1) / num_splits
-
-        for split_id in xrange(num_splits):
+        le = int((len(all_data) + num_splits - 1) / num_splits)
+        for split_id in range(num_splits):
             st = split_id * le
             sub_data = all_data[st : st + le]
-
-            with open('tensors-%d.pkl' % split_id, 'wb') as f:
+            with open(os.path.join(save_dir, f"tensors-{split_id}.pkl"), 'wb') as f:
                 pickle.dump(sub_data, f, pickle.HIGHEST_PROTOCOL)
 
     elif args.mode == 'single':
         #dataset contains single molecules
         with open(args.train) as f:
             data = [line.strip("\r\n ").split()[0] for line in f]
-
+        
+        num_splits = int(len(data) / 10000)
         all_data = pool.map(tensorize, data)
-        num_splits = len(data) / 10000
-
-        le = (len(all_data) + num_splits - 1) / num_splits
-
-        for split_id in xrange(num_splits):
+        le = int((len(all_data) + num_splits - 1) / num_splits)
+        
+        for split_id in range(num_splits):
             st = split_id * le
             sub_data = all_data[st : st + le]
-
-            with open('tensors-%d.pkl' % split_id, 'wb') as f:
+            with open(os.path.join(save_dir, f"tensors-{split_id}.pkl"), 'wb') as f:
                 pickle.dump(sub_data, f, pickle.HIGHEST_PROTOCOL)
 

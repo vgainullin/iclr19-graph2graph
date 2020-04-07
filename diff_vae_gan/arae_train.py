@@ -94,7 +94,7 @@ x_loader = iter(x_loader)
 y_loader = MolTreeFolder(args.ymols, vocab, args.gan_batch_size, num_workers=4, assm=False, replicate=num_epoch)
 y_loader = iter(y_loader)
 
-for epoch in xrange(args.load_epoch + 1, args.epoch):
+for epoch in range(args.load_epoch + 1, args.epoch):
     meters = np.zeros(7)
     main_loader = PairTreeFolder(args.train, vocab, args.batch_size, num_workers=4)
 
@@ -112,7 +112,7 @@ for epoch in xrange(args.load_epoch + 1, args.epoch):
         optimizer.step()
 
         #2. Train discriminator
-        for i in xrange(args.diter):
+        for i in range(args.diter):
             GAN.netD.zero_grad()
             x_batch, _ = next(x_loader)
             y_batch = next(y_loader)
