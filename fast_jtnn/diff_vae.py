@@ -20,7 +20,7 @@ class DiffVAE(nn.Module):
         self.vocab = vocab
         self.hidden_size = hidden_size = args.hidden_size
         self.rand_size = rand_size = args.rand_size
-
+        self.rand_size_half = int(rand_size / 2)
         self.jtmpn = JTMPN(hidden_size, args.depthG)
         self.mpn = MPN(hidden_size, args.depthG)
 
@@ -35,12 +35,12 @@ class DiffVAE(nn.Module):
         self.A_assm = nn.Linear(hidden_size, hidden_size, bias=False)
         self.assm_loss = nn.CrossEntropyLoss(size_average=False)
 
-        self.T_mean = nn.Linear(hidden_size, rand_size / 2)
-        self.T_var = nn.Linear(hidden_size, rand_size / 2)
-        self.G_mean = nn.Linear(hidden_size, rand_size / 2)
-        self.G_var = nn.Linear(hidden_size, rand_size / 2)
-        self.B_t = nn.Sequential(nn.Linear(hidden_size + rand_size / 2, hidden_size), nn.ReLU())
-        self.B_g = nn.Sequential(nn.Linear(hidden_size + rand_size / 2, hidden_size), nn.ReLU())
+        self.T_mean = nn.Linear(hidden_size, self.rand_size_half)
+        self.T_var = nn.Linear(hidden_size, self.rand_size_half)
+        self.G_mean = nn.Linear(hidden_size, self.rand_size_half)
+        self.G_var = nn.Linear(hidden_size, self.rand_size_half)
+        self.B_t = nn.Sequential(nn.Linear(hidden_size + self.rand_size_half, hidden_size), nn.ReLU())
+        self.B_g = nn.Sequential(nn.Linear(hidden_size + self.rand_size_half, hidden_size), nn.ReLU())
             
     def encode(self, jtenc_holder, mpn_holder):
         tree_vecs, tree_mess = self.jtnn(*jtenc_holder)
@@ -48,9 +48,9 @@ class DiffVAE(nn.Module):
         return tree_vecs, tree_mess, mol_vecs
 
     def fuse_noise(self, tree_vecs, mol_vecs):
-        tree_eps = create_var( torch.randn(tree_vecs.size(0), 1, self.rand_size / 2) )
+        tree_eps = create_var( torch.randn(tree_vecs.size(0), 1, self.rand_size_half) )
         tree_eps = tree_eps.expand(-1, tree_vecs.size(1), -1)
-        mol_eps = create_var( torch.randn(mol_vecs.size(0), 1, self.rand_size / 2) )
+        mol_eps = create_var( torch.randn(mol_vecs.size(0), 1, self.rand_size_half) )
         mol_eps = mol_eps.expand(-1, mol_vecs.size(1), -1)
 
         tree_vecs = torch.cat([tree_vecs,tree_eps], dim=-1) 

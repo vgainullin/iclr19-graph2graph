@@ -1,5 +1,5 @@
 import sys
-sys.path.append('../fast_jtnn/')
+sys.path.append('../')
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -40,7 +40,7 @@ parser.add_argument('--anneal_rate', type=float, default=0.9)
 parser.add_argument('--lr', type=float, default=1e-3)
 
 args = parser.parse_args()
-print args
+print(args)
   
 vocab = [x.strip("\r\n ") for x in open(args.vocab)] 
 vocab = Vocab(vocab)
@@ -55,8 +55,8 @@ for param in model.parameters():
 
 if args.load_epoch >= 0:
     model.load_state_dict(torch.load(args.save_dir + "/model.iter-" + str(args.load_epoch)))
-
-print "Model #Params: %dK" % (sum([x.nelement() for x in model.parameters()]) / 1000,)
+model_params = sum([x.nelement() for x in model.parameters()]) / 1000
+print(f"Model #Params: {model_params}")
 
 optimizer = optim.Adam(model.parameters(), lr=args.lr)
 scheduler = lr_scheduler.ExponentialLR(optimizer, args.anneal_rate)
@@ -77,7 +77,7 @@ for epoch in range(args.load_epoch + 1, args.epoch):
             loss, kl_div, wacc, tacc, sacc = model(x_batch, y_batch, args.beta)
             loss.backward()
         except Exception as e:
-            print e
+            print(e)
             continue
 
         nn.utils.clip_grad_norm_(model.parameters(), args.clip_norm)
@@ -87,13 +87,15 @@ for epoch in range(args.load_epoch + 1, args.epoch):
 
         if (it + 1) % PRINT_ITER == 0:
             meters /= PRINT_ITER
-            print "KL: %.2f, Word: %.2f, Topo: %.2f, Assm: %.2f, PNorm: %.2f, GNorm: %.2f" % (meters[0], meters[1], meters[2], meters[3], param_norm(model), grad_norm(model))
+            print(f"KL: {meters[0]}, Word: {meters[1]}, Topo: {meters[2]}, Assm: {meters[3]}, PNorm: {param_norm(model)}, GNorm: {grad_norm(model)}")
             sys.stdout.flush()
             meters *= 0
 
     scheduler.step()
 
-    print "learning rate: %.6f" % scheduler.get_lr()[0]
+    print(f"learning rate: {scheduler.get_lr()[0]}")
     if args.save_dir is not None:
         torch.save(model.state_dict(), args.save_dir + "/model.iter-" + str(epoch))
 
+if __name__ == '__main__':
+    main()    

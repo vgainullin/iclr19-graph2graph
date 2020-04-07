@@ -26,7 +26,7 @@ class PairTreeFolder(object):
     def __iter__(self):
         for fn in self.data_files:
             fn = os.path.join(self.data_folder, fn)
-            with open(fn) as f:
+            with open(fn, 'rb') as f:
                 data = pickle.load(f)
 
             if self.shuffle: 
@@ -61,7 +61,7 @@ class MolTreeFolder(object):
     def __iter__(self):
         for fn in self.data_files:
             fn = os.path.join(self.data_folder, fn)
-            with open(fn) as f:
+            with open(fn, 'rb') as f:
                 data = pickle.load(f)
 
             if self.shuffle: 
