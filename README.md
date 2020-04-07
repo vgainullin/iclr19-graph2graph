@@ -9,7 +9,7 @@ This is the official implementation of junction tree encoder-decoder model in ht
 * Numpy
 * scikit-learn
 
-The code has been tested under python 2.7 with pytorch 0.4.1. 
+The code has been tested under python 3.6, torch v1.4.0 and cuda v10.0. 
 
 ## Quick Start
 The tutorial of training and testing our variational junction tree encoder-decoder is in [diff_vae/README.md](./diff_vae).
