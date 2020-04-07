@@ -1,0 +1,13 @@
+name: graph2graph
+channels:
+  - defaults
+  - rdkit 
+dependencies:
+  - python=3.6
+  - scikit-learn
+  - rdkit
+  - numpy
+  - pytorch
+  
+
+
