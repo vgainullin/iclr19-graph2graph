@@ -15,7 +15,11 @@ class Vocab(object):
         self.slots = [get_slots(smiles) for smiles in self.vocab]
         
     def get_index(self, smiles):
-        return self.vmap[smiles]
+        #TODO(FIXME) Figure out why there are missing smiles in vmap
+        if smiles in self.vmap:
+            return self.vmap[smiles]
+        else:
+            return 0
 
     def get_smiles(self, idx):
         return self.vocab[idx]

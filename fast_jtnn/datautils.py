@@ -9,6 +9,10 @@ import pickle
 import os
 import random
 
+
+def collate(x):
+    return x[0]
+
 class PairTreeFolder(object):
 
     def __init__(self, data_folder, vocab, batch_size, num_workers=4, shuffle=True, y_assm=True, replicate=None):
@@ -24,11 +28,12 @@ class PairTreeFolder(object):
             self.data_files = self.data_files * replicate
 
     def __iter__(self):
+        
         for fn in self.data_files:
             fn = os.path.join(self.data_folder, fn)
+            print(fn)
             with open(fn, 'rb') as f:
                 data = pickle.load(f)
-
             if self.shuffle: 
                 random.shuffle(data) #shuffle data before batch
 
@@ -37,10 +42,11 @@ class PairTreeFolder(object):
                 batches.pop()
 
             dataset = PairTreeDataset(batches, self.vocab, self.y_assm)
-            dataloader = DataLoader(dataset, batch_size=1, shuffle=False, num_workers=self.num_workers, collate_fn=lambda x:x[0])
+            dataloader = DataLoader(dataset, batch_size=1, shuffle=False, num_workers=self.num_workers, collate_fn=collate)
 
             for b in dataloader:
-                yield b
+                if b:
+                    yield b
 
             del data, batches, dataset, dataloader
 
@@ -59,6 +65,7 @@ class MolTreeFolder(object):
             self.data_files = self.data_files * replicate
 
     def __iter__(self):
+        
         for fn in self.data_files:
             fn = os.path.join(self.data_folder, fn)
             with open(fn, 'rb') as f:
@@ -72,7 +79,7 @@ class MolTreeFolder(object):
                 batches.pop()
 
             dataset = MolTreeDataset(batches, self.vocab, self.assm)
-            dataloader = DataLoader(dataset, batch_size=1, shuffle=False, num_workers=self.num_workers, collate_fn=lambda x:x[0])
+            dataloader = DataLoader(dataset, batch_size=1, shuffle=False, num_workers=self.num_workers, collate_fn=collate)
 
             for b in dataloader:
                 yield b
