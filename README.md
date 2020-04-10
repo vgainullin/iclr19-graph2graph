@@ -3,13 +3,13 @@
 This is the official implementation of junction tree encoder-decoder model in https://arxiv.org/abs/1812.01070
 
 ## Requirements
-* Python == 2.7
+* Python == 3.6
 * RDKit >= 2017.09
 * PyTorch >= 0.4.0
 * Numpy
 * scikit-learn
 
-The code has been tested under python 2.7 with pytorch 0.4.1. 
+The code has been tested under python 3.6, torch v1.4.0 and cuda v10.0. 
 
 ## Quick Start
 The tutorial of training and testing our variational junction tree encoder-decoder is in [diff_vae/README.md](./diff_vae).
@@ -22,5 +22,5 @@ A quick summary of different folders:
 * `props/` is the property evaluation module, including penalized logP, QED and DRD2 property calculation.
 * `scripts/` provides evaluation and data preprocessing scripts.
 
-## Contact
+## Original author
 Wengong Jin (wengong@csail.mit.edu)
