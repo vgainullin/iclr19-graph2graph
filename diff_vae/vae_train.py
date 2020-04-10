@@ -1,6 +1,8 @@
 import sys
 sys.path.append('../')
+import os
 import torch
+torch.set_num_threads(1)
 import torch.nn as nn
 import torch.optim as optim
 import torch.optim.lr_scheduler as lr_scheduler
@@ -39,14 +41,12 @@ def main(args):
 
     optimizer = optim.Adam(model.parameters(), lr=args.lr)
     scheduler = lr_scheduler.ExponentialLR(optimizer, args.anneal_rate)
-    scheduler.step()
-
     PRINT_ITER = 20
     param_norm = lambda m: math.sqrt(sum([p.norm().item() ** 2 for p in m.parameters()]))
     grad_norm = lambda m: math.sqrt(sum([p.grad.norm().item() ** 2 for p in m.parameters() if p.grad is not None]))
 
     for epoch in range(args.load_epoch + 1, args.epoch):
-        loader = PairTreeFolder(args.train, vocab, args.batch_size, num_workers=4)
+        loader = PairTreeFolder(args.train, vocab, args.batch_size, num_workers=16)
         meters = np.zeros(4)
 
         for it, batch in enumerate(loader):
@@ -60,8 +60,11 @@ def main(args):
                 continue
 
             nn.utils.clip_grad_norm_(model.parameters(), args.clip_norm)
+            #TODO(FIXME) In PyTorch 1.1.0 and later, you should call them in the opposite order: `optimizer.step()` before `lr_scheduler.step()`.  
+            # Failure to do this will result in PyTorch skipping the first value of the learning rate schedule. 
+            # See more details at https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate"
+            # https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate", UserWarning)
             optimizer.step()
-
             meters = meters + np.array([kl_div, wacc * 100, tacc * 100, sacc * 100])
 
             if (it + 1) % PRINT_ITER == 0:
@@ -99,4 +102,5 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
     print(args)
+    os.makedirs(args.save_dir, exist_ok=True)
     main(args)    

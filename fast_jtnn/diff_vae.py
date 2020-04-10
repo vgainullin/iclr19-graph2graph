@@ -33,7 +33,7 @@ class DiffVAE(nn.Module):
             self.decoder = JTNNDecoder(vocab, hidden_size, nn.Embedding(vocab.size(), hidden_size), args.use_molatt)
 
         self.A_assm = nn.Linear(hidden_size, hidden_size, bias=False)
-        self.assm_loss = nn.CrossEntropyLoss(size_average=False)
+        self.assm_loss = nn.CrossEntropyLoss(reduction='sum') #size_average=False
 
         self.T_mean = nn.Linear(hidden_size, self.rand_size_half)
         self.T_var = nn.Linear(hidden_size, self.rand_size_half)

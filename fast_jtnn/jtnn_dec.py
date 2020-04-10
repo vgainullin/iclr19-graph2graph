@@ -50,8 +50,8 @@ class JTNNDecoder(nn.Module):
         self.U_o = nn.Linear(hidden_size, 1)
 
         #Loss Functions
-        self.pred_loss = nn.CrossEntropyLoss(size_average=False)
-        self.stop_loss = nn.BCEWithLogitsLoss(size_average=False)
+        self.pred_loss = nn.CrossEntropyLoss(reduction='sum')#size_average=False
+        self.stop_loss = nn.BCEWithLogitsLoss(reduction='sum')#size_average=False
 
     def attention(self, hiddens, contexts, x_tree_vecs, x_mol_vecs, mode):
         if mode == 'word':

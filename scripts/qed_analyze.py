@@ -20,5 +20,5 @@ for i in range(0, len(data), args.num_decode):
     if len(good) > 0:
         n_succ += 1
 
-print 'Evaluated on %d samples' % (n_mols,)
-print 'success rate', n_succ / n_mols
+print(f'Evaluated on {n_mols} samples')
+print(f'success rate {n_succ / n_mols}') 

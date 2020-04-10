@@ -8,6 +8,7 @@ dependencies:
   - rdkit
   - numpy
   - pytorch
+  - networkx
   
 
 

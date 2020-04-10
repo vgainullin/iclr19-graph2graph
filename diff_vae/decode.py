@@ -1,3 +1,6 @@
+import sys
+sys.path.append('../')
+
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -9,7 +12,7 @@ import math, random, sys
 import numpy as np
 import argparse
 from collections import deque
-import cPickle as pickle
+import pickle
 
 from fast_jtnn import *
 import rdkit
@@ -58,4 +61,4 @@ for batch in loader:
         z_tree_vecs, z_mol_vecs = model.fuse_noise(x_tree_vecs, x_mol_vecs)
         smiles = mol_batch[0].smiles
         new_smiles = model.decode(z_tree_vecs[0].unsqueeze(0), z_mol_vecs[0].unsqueeze(0))
-        print smiles, new_smiles
+        print(smiles, new_smiles)

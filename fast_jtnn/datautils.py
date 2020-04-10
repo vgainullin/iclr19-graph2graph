@@ -98,6 +98,7 @@ class PairTreeDataset(Dataset):
     
     def __getitem__(self, idx):
         batch0, batch1 = zip(*self.data[idx])
+        print(len(batch0),len(batch1),len(self.data[idx]))
         return tensorize(batch0, self.vocab, assm=False), tensorize(batch1, self.vocab, assm=self.y_assm)
 
 class MolTreeDataset(Dataset):

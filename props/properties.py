@@ -3,8 +3,8 @@ from rdkit import Chem, DataStructs
 from rdkit.Chem import AllChem
 from rdkit.Chem import Descriptors
 import rdkit.Chem.QED as QED
-import sascorer
-import drd2_scorer
+import props.sascorer as sascorer
+import props.drd2_scorer as drd2_scorer
 import networkx as nx
 
 def similarity(a, b):
@@ -69,4 +69,4 @@ def smiles2D(s):
     return Chem.MolToSmiles(mol)
 
 if __name__ == "__main__":
-    print round(penalized_logp('ClC1=CC=C2C(C=C(C(C)=O)C(C(NC3=CC(NC(NC4=CC(C5=C(C)C=CC=C5)=CC=C4)=O)=CC=C3)=O)=C2)=C1'), 2), 5.30
+    print(round(penalized_logp('ClC1=CC=C2C(C=C(C(C)=O)C(C(NC3=CC(NC(NC4=CC(C5=C(C)C=CC=C5)=CC=C4)=O)=CC=C3)=O)=C2)=C1'), 2), 5.30)
